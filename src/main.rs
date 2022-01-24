@@ -12,7 +12,6 @@ impl Plugin for HelloPlugin {
     fn build(&self, app: &mut App) {
         app
             .add_startup_system(add_people)
-            .add_system(hello_world)
             .add_system(greet_people);
     }
 }
@@ -22,10 +21,6 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(HelloPlugin)
         .run();
-}
-
-fn hello_world() {
-    println!("hello world!");
 }
 
 fn greet_people(query: Query<&Name, With<Person>>) {
