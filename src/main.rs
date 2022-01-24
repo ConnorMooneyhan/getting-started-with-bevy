@@ -8,9 +8,12 @@ struct Name(String);
 
 pub struct HelloPlugin;
 
+struct GreetTimer(Timer);
+
 impl Plugin for HelloPlugin {
     fn build(&self, app: &mut App) {
         app
+            .insert_resource(GreetTimer(Timer::from_seconds(2.0, true)))
             .add_startup_system(add_people)
             .add_system(greet_people);
     }
@@ -23,8 +26,10 @@ fn main() {
         .run();
 }
 
-fn greet_people(query: Query<&Name, With<Person>>) {
-    query.iter().for_each(|name| println!("Hello, {}!", name.0));
+fn greet_people(time: Res<Time>, mut timer: ResMut<GreetTimer>, query: Query<&Name, With<Person>>) {
+    if timer.0.tick(time.delta()).just_finished() {
+        query.iter().for_each(|name| println!("Hello, {}!", name.0));
+    }
 }
 
 fn add_people(mut commands: Commands) {
